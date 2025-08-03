@@ -211,17 +211,35 @@ export class YouTubeService {
   }
 
   async getPopularTracks(userLanguages?: string[], userGenres?: string[]): Promise<YouTubeTrack[]> {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
+    try {
+      // Try to get real trending music from YouTube API
+      const apiResults = await youtubeApiService.getTrendingMusic('IN');
 
-    const filtered = this.filterTracksByPreferences(indianPopularTracks, userLanguages, userGenres);
+      if (apiResults.length > 0) {
+        // Convert API results to our YouTubeTrack format
+        const convertedTracks = apiResults.map(result => ({
+          id: result.videoId,
+          title: result.title,
+          artist: result.channelTitle,
+          thumbnail: result.thumbnail,
+          duration: result.duration,
+          videoId: result.videoId,
+          url: `https://www.youtube.com/watch?v=${result.videoId}`,
+          genre: this.inferGenre(result.title, result.channelTitle),
+          language: this.inferLanguage(result.title, result.channelTitle)
+        }));
 
-    // If no matches, return some popular tracks anyway
-    if (filtered.length === 0) {
-      return indianPopularTracks.slice(0, 10);
+        const filtered = this.filterTracksByPreferences(convertedTracks, userLanguages, userGenres);
+        return filtered.length > 0 ? filtered : convertedTracks.slice(0, 10);
+      }
+    } catch (error) {
+      console.log('YouTube API not available, using demo data');
     }
 
-    return filtered;
+    // Fallback to demo data
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const filtered = this.filterTracksByPreferences(indianPopularTracks, userLanguages, userGenres);
+    return filtered.length > 0 ? filtered : indianPopularTracks.slice(0, 10);
   }
 
   async getTrendingTracks(userLanguages?: string[], userGenres?: string[]): Promise<YouTubeTrack[]> {
