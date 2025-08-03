@@ -140,9 +140,19 @@ export class YouTubeService {
 
   // Get the audio stream URL (in production, you'd use youtube-dl or similar)
   getAudioStreamUrl(videoId: string): string {
-    // For demo purposes, we'll return a placeholder audio URL
-    // In production, you'd need to extract the actual audio stream
-    return `https://www.youtube.com/watch?v=${videoId}`;
+    // For demo purposes, we'll return working demo audio URLs
+    // In production, you'd need to extract the actual audio stream from YouTube
+    const demoAudioUrls = [
+      "https://www.soundjay.com/misc/sounds/bell-ringing-05.wav",
+      "https://file-examples.com/storage/fe936a63ad66a0ecbb2b85c/2017/11/file_example_MP3_700KB.mp3",
+      "https://samplelib.com/lib/preview/mp3/sample-3s.mp3",
+      "https://samplelib.com/lib/preview/mp3/sample-6s.mp3",
+      "https://samplelib.com/lib/preview/mp3/sample-9s.mp3"
+    ];
+
+    // Return a random demo audio URL based on video ID
+    const index = parseInt(videoId.slice(-1), 36) % demoAudioUrls.length;
+    return demoAudioUrls[index];
   }
 
   // Convert YouTube track to AudioFile format for the player
