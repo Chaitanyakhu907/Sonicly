@@ -129,25 +129,58 @@ const Index = () => {
             )}
           </div>
 
-          {/* Sonicly Player Section */}
-          <div
-            className="backdrop-blur-lg rounded-2xl p-6 shadow-2xl border transition-all duration-300"
-            style={{
-              background: currentTheme.colors.surface,
-              borderColor: currentTheme.colors.border,
-            }}
-          >
-            <PlaylistTable
-              audioFiles={audioFiles}
-              onFilesSelected={handleFilesSelected}
-              onScanDevice={handleScanDevice}
-              onRemoveTrack={handleRemoveTrack}
-              isProcessing={isProcessing}
-              isInIframe={isInIframe()}
-              onTrackSelect={handleTrackSelect}
-              currentTrack={audioPlayer.currentTrack}
-            />
-          </div>
+          {/* Main Content Tabs */}
+          <Tabs defaultValue="discover" className="w-full">
+            <TabsList
+              className="grid w-full grid-cols-2 mb-8 backdrop-blur-lg border"
+              style={{
+                background: currentTheme.colors.surface + "aa",
+                borderColor: currentTheme.colors.border,
+              }}
+            >
+              <TabsTrigger
+                value="discover"
+                className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"
+              >
+                🎵 Discover Music
+              </TabsTrigger>
+              <TabsTrigger
+                value="mymusic"
+                className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"
+              >
+                📁 My Music
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="discover">
+              <DiscoverySection
+                onTrackSelect={handleTrackSelect}
+                currentTrack={audioPlayer.currentTrack}
+                theme={currentTheme}
+              />
+            </TabsContent>
+
+            <TabsContent value="mymusic">
+              <div
+                className="backdrop-blur-lg rounded-2xl p-6 shadow-2xl border transition-all duration-300"
+                style={{
+                  background: currentTheme.colors.surface,
+                  borderColor: currentTheme.colors.border,
+                }}
+              >
+                <PlaylistTable
+                  audioFiles={audioFiles}
+                  onFilesSelected={handleFilesSelected}
+                  onScanDevice={handleScanDevice}
+                  onRemoveTrack={handleRemoveTrack}
+                  isProcessing={isProcessing}
+                  isInIframe={isInIframe()}
+                  onTrackSelect={handleTrackSelect}
+                  currentTrack={audioPlayer.currentTrack}
+                />
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
 
