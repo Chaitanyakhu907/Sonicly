@@ -24,6 +24,8 @@ const DiscoverySection: React.FC<DiscoverySectionProps> = ({
   const [trendingTracks, setTrendingTracks] = useState<YouTubeTrack[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hoveredTrack, setHoveredTrack] = useState<string | null>(null);
+  const [showPreferencesModal, setShowPreferencesModal] = useState(false);
+  const [userPreferences, setUserPreferences] = useState(userPreferencesService.getPreferences());
 
   useEffect(() => {
     const loadTracks = async () => {
