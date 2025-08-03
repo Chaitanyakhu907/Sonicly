@@ -100,9 +100,19 @@ export const useAudioPlayer = () => {
         // In production, this would connect to a YouTube audio extraction service
         audioRef.current.src = "";
 
-        // Show demo notification
+        // Show demo notification using toast
         setTimeout(() => {
-          alert(`🎵 "${track.name || track.title}" by ${track.artist}\n\n⚡ This is a demo of the Spotify-like discovery feature!\n\nIn production, this would:\n• Stream audio from YouTube without ads\n• Use proper audio extraction services\n• Provide full playback controls\n\nFor now, you can upload your own music files in the "My Music" tab.`);
+          // Import and use toast dynamically to avoid dependency issues
+          import("@/hooks/use-toast").then(({ toast }) => {
+            toast({
+              title: `🎵 Now Playing: ${track.name || track.title}`,
+              description: `by ${track.artist}\n\n�� Demo Mode: In production, this would stream from YouTube without ads!`,
+              duration: 5000,
+            });
+          }).catch(() => {
+            // Fallback to console if toast is not available
+            console.log(`🎵 Now Playing: ${track.name || track.title} by ${track.artist} (Demo Mode)`);
+          });
         }, 100);
       } else {
         // Regular local audio file
