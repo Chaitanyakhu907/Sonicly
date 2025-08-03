@@ -61,13 +61,21 @@ export const useAudioPlayer = () => {
     if (audioRef.current) {
       // Handle YouTube tracks differently
       if (track.isYouTube) {
-        // For YouTube tracks, we'll show a message since we can't actually play them
-        // In production, you'd integrate with a proper YouTube audio extraction service
-        console.log("Playing YouTube track:", track.name);
-        alert(`🎵 Now playing: ${track.name} by ${track.artist}\n\nNote: This is a demo. In production, this would stream audio from YouTube without ads using proper audio extraction services.`);
+        console.log("Loading YouTube track:", track.name || track.title);
+
+        // Use a working demo audio URL for YouTube tracks
+        const demoAudioUrl = "https://samplelib.com/lib/preview/mp3/sample-15s.mp3";
+        audioRef.current.src = demoAudioUrl;
+
+        // Show demo notification
+        setTimeout(() => {
+          alert(`🎵 Demo Mode: Playing "${track.name || track.title}" by ${track.artist}\n\nNote: This is playing demo audio. In production, this would stream the actual song from YouTube without ads.`);
+        }, 100);
+      } else {
+        // Regular local audio file
+        audioRef.current.src = track.url;
       }
 
-      audioRef.current.src = track.url;
       setState((prev) => ({
         ...prev,
         currentTrack: track,
