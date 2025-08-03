@@ -365,13 +365,24 @@ const ApiKeyConfiguration: React.FC<ApiKeyConfigurationProps> = ({
                 {connectionStatus === 'error' && (
                   <AlertCircle className="h-5 w-5 text-red-500" />
                 )}
-                <Button 
-                  onClick={testConnection}
-                  disabled={isTestingConnection || !youtubeApiKey}
-                  variant="outline"
-                >
-                  {isTestingConnection ? 'Testing...' : 'Test Connection'}
-                </Button>
+
+                {selectedService === 'demo' ? (
+                  <Button
+                    onClick={testDemoMode}
+                    variant="outline"
+                    className="bg-purple-50 hover:bg-purple-100"
+                  >
+                    ✓ Demo Mode Ready
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={testConnection}
+                    disabled={isTestingConnection}
+                    variant="outline"
+                  >
+                    {isTestingConnection ? 'Testing API...' : 'Test YouTube API'}
+                  </Button>
+                )}
               </div>
             </div>
 
