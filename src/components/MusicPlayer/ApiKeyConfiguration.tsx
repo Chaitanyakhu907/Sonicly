@@ -373,7 +373,15 @@ const ApiKeyConfiguration: React.FC<ApiKeyConfigurationProps> = ({
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  Connection failed. Please check your API keys and try again.
+                  <div className="space-y-2">
+                    <p>Connection failed. Common solutions:</p>
+                    <ul className="list-disc list-inside text-sm space-y-1">
+                      <li>Ensure YouTube Data API v3 is enabled in Google Cloud Console</li>
+                      <li>Check that your API key is correct (no extra spaces)</li>
+                      <li>Verify API key restrictions (referrer, IP, etc.)</li>
+                      <li>Check if you've exceeded your quota (10,000 requests/day)</li>
+                    </ul>
+                  </div>
                 </AlertDescription>
               </Alert>
             )}
