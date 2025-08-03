@@ -1,5 +1,7 @@
 // YouTube Music API service for fetching popular songs
-// Note: This is a demo implementation. In production, you'd need proper YouTube API keys and handling
+// Integrates with real YouTube API when available, falls back to demo data
+
+import { youtubeApiService } from "./youtubeApi";
 
 export interface YouTubeTrack {
   id: string;
