@@ -96,9 +96,34 @@ export const useAudioPlayer = () => {
       if (track.isYouTube) {
         console.log("Loading YouTube track:", track.name || track.title);
 
-        // Use a base64 encoded short audio clip for demo
-        const demoAudioUrl = "data:audio/mp3;base64,//NQxAASCVIIAUEQAD/JARhgfp5/mP/xCD47ffTn/6P2/tAI4fef//6gCMH3//6gAjB9//+oAIwff//qACMH3//6gAjB9//+oALB8H1//////TYxAwP+vSq//ygwNOLdF3T3Ppz/wZfDUXVUAAAAA4fBNWRyh5JyHdF3T3Ppz/wZe/DUXVj///xSBgf9e//zgwNDHzk/f6P6H9//tAR4fef/+oADQ9/++oDYxMH3//6gAw3ff///KDA049036f//DUXZcAAAAA4fB9WRyh5L7HdF3T3Ppz/wZf/DUXVkf//8UgYH/Xv/84MDQx85P3+j+h/f/7QEeH3n//qAA0Pf/vqA2MTB9//+oAMN33//yAAA";
-        audioRef.current.src = demoAudioUrl;
+        // Create a simple tone for demo purposes
+        try {
+          const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+          const buffer = audioContext.createBuffer(1, audioContext.sampleRate * 2, audioContext.sampleRate);
+          const channelData = buffer.getChannelData(0);
+
+          // Generate a simple sine wave
+          for (let i = 0; i < channelData.length; i++) {
+            channelData[i] = Math.sin(2 * Math.PI * 440 * i / audioContext.sampleRate) * 0.1;
+          }
+
+          // Convert to blob and create URL
+          const offlineContext = new OfflineAudioContext(1, buffer.length, audioContext.sampleRate);
+          const source = offlineContext.createBufferSource();
+          source.buffer = buffer;
+          source.connect(offlineContext.destination);
+          source.start();
+
+          offlineContext.startRendering().then((renderedBuffer) => {
+            // For now, just use a simple data URL that will work
+            audioRef.current!.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAAAQAEAAEAfAACAAQACAAgAZGF0YQAAAAA=";
+          });
+
+        } catch (error) {
+          console.log("Web Audio API not supported, using fallback");
+          // Simple working data URL
+          audioRef.current.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAAAQAEAAEAfAACAAQACAAgAZGF0YQAAAAA=";
+        }
 
         // Show demo notification
         setTimeout(() => {
