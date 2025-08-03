@@ -140,8 +140,11 @@ export const useAudioPlayer = () => {
     if (audioRef.current) {
       audioRef.current.pause();
       setState((prev) => ({ ...prev, isPlaying: false }));
+    } else if (state.currentTrack?.isYouTube) {
+      // Handle YouTube track pause
+      setState((prev) => ({ ...prev, isPlaying: false }));
     }
-  }, []);
+  }, [state.currentTrack]);
 
   const togglePlayPause = useCallback(() => {
     if (state.isPlaying) {
