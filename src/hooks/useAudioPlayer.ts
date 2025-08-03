@@ -96,38 +96,13 @@ export const useAudioPlayer = () => {
       if (track.isYouTube) {
         console.log("Loading YouTube track:", track.name || track.title);
 
-        // Create a simple tone for demo purposes
-        try {
-          const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-          const buffer = audioContext.createBuffer(1, audioContext.sampleRate * 2, audioContext.sampleRate);
-          const channelData = buffer.getChannelData(0);
-
-          // Generate a simple sine wave
-          for (let i = 0; i < channelData.length; i++) {
-            channelData[i] = Math.sin(2 * Math.PI * 440 * i / audioContext.sampleRate) * 0.1;
-          }
-
-          // Convert to blob and create URL
-          const offlineContext = new OfflineAudioContext(1, buffer.length, audioContext.sampleRate);
-          const source = offlineContext.createBufferSource();
-          source.buffer = buffer;
-          source.connect(offlineContext.destination);
-          source.start();
-
-          offlineContext.startRendering().then((renderedBuffer) => {
-            // For now, just use a simple data URL that will work
-            audioRef.current!.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAAAQAEAAEAfAACAAQACAAgAZGF0YQAAAAA=";
-          });
-
-        } catch (error) {
-          console.log("Web Audio API not supported, using fallback");
-          // Simple working data URL
-          audioRef.current.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAAAQAEAAEAfAACAAQACAAgAZGF0YQAAAAA=";
-        }
+        // For YouTube tracks, we don't set an audio source to avoid loading errors
+        // In production, this would connect to a YouTube audio extraction service
+        audioRef.current.src = "";
 
         // Show demo notification
         setTimeout(() => {
-          console.log(`🎵 Demo Mode: Playing "${track.name || track.title}" by ${track.artist}`);
+          alert(`🎵 "${track.name || track.title}" by ${track.artist}\n\n⚡ This is a demo of the Spotify-like discovery feature!\n\nIn production, this would:\n• Stream audio from YouTube without ads\n• Use proper audio extraction services\n• Provide full playback controls\n\nFor now, you can upload your own music files in the "My Music" tab.`);
         }, 100);
       } else {
         // Regular local audio file
