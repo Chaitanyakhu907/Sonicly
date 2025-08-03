@@ -32,8 +32,8 @@ const DiscoverySection: React.FC<DiscoverySectionProps> = ({
       setIsLoading(true);
       try {
         const [popular, trending] = await Promise.all([
-          youtubeService.getPopularTracks(),
-          youtubeService.getTrendingTracks()
+          youtubeService.getPopularTracks(userPreferences.languages, userPreferences.genres),
+          youtubeService.getTrendingTracks(userPreferences.languages, userPreferences.genres)
         ]);
         setPopularTracks(popular);
         setTrendingTracks(trending);
@@ -45,7 +45,17 @@ const DiscoverySection: React.FC<DiscoverySectionProps> = ({
     };
 
     loadTracks();
-  }, []);
+
+    // Show preferences modal if user hasn't completed setup
+    if (userPreferencesService.needsSetup()) {
+      setShowPreferencesModal(true);
+    }
+  }, [userPreferences]);
+
+  const handlePreferencesComplete = (newPreferences: any) => {
+    setUserPreferences(newPreferences);
+    setShowPreferencesModal(false);
+  };
 
   const handleTrackPlay = (track: YouTubeTrack) => {
     const audioFile = youtubeService.convertToAudioFile(track);
