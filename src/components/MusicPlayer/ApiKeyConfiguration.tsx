@@ -50,10 +50,18 @@ const ApiKeyConfiguration: React.FC<ApiKeyConfigurationProps> = ({
     if (savedService) setSelectedService(savedService);
   }, []);
 
+  const testDemoMode = () => {
+    setConnectionStatus('success');
+    toast.success("🎵 Demo Mode Ready!", {
+      description: "You can use the app with demo audio tones. No API key needed!"
+    });
+  };
+
   const testConnection = async () => {
     if (!youtubeApiKey.trim()) {
-      toast.error("API Key Required", {
-        description: "Please enter your YouTube Data API v3 key before testing"
+      toast.warning("⚠️ No API Key Entered", {
+        description: "Enter your YouTube API key above, or use Demo Mode instead.",
+        duration: 5000
       });
       return;
     }
@@ -73,8 +81,8 @@ const ApiKeyConfiguration: React.FC<ApiKeyConfigurationProps> = ({
 
       if (testResults && testResults.length > 0) {
         setConnectionStatus('success');
-        toast.success("✅ Connection successful!", {
-          description: `Found ${testResults.length} result(s). YouTube API is working properly.`
+        toast.success("✅ Real YouTube API Connected!", {
+          description: `Found ${testResults.length} result(s). You can now stream real music from YouTube!`
         });
       } else {
         setConnectionStatus('error');
@@ -90,17 +98,24 @@ const ApiKeyConfiguration: React.FC<ApiKeyConfigurationProps> = ({
       const errorMessage = error.message || error.toString();
 
       if (errorMessage.includes('403')) {
-        toast.error("❌ API Access Denied (403)", {
-          description: errorMessage,
-          duration: 8000
+        toast.error("❌ YouTube API Setup Required", {
+          description: "To use real YouTube music, you need to set up the YouTube Data API v3. See instructions above, or continue with Demo Mode.",
+          duration: 10000,
+          action: {
+            label: "Use Demo Mode",
+            onClick: () => {
+              setSelectedService('demo');
+              testDemoMode();
+            }
+          }
         });
       } else if (errorMessage.includes('400')) {
-        toast.error("❌ Invalid Request (400)", {
-          description: "Check your API key format and try again"
+        toast.error("❌ Invalid API Key Format", {
+          description: "Check your API key format - it should be a 39-character string"
         });
       } else if (errorMessage.includes('429')) {
-        toast.error("❌ Quota Exceeded (429)", {
-          description: "You've reached your daily API limit. Try again tomorrow."
+        toast.error("❌ Quota Exceeded", {
+          description: "You've reached your daily API limit (10,000 requests). Try again tomorrow."
         });
       } else {
         toast.error("❌ Connection failed", {
