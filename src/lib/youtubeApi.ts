@@ -344,7 +344,22 @@ class YouTubeApiService {
       const response = await fetch(`${trendingUrl}?${params}`);
 
       if (!response.ok) {
-        throw new Error(`YouTube API error: ${response.status} ${response.statusText}`);
+        // Get error details from response
+        let errorDetails = '';
+        try {
+          const errorData = await response.json();
+          errorDetails = errorData.error?.message || errorData.message || '';
+        } catch {
+          // If we can't parse error response, continue with basic error
+        }
+
+        // Provide specific guidance for common errors
+        if (response.status === 403) {
+          const diagnosis = this.diagnose403Error(errorDetails);
+          throw new Error(`YouTube API Error (403): ${diagnosis}`);
+        } else {
+          throw new Error(`YouTube API Error (${response.status}): ${response.statusText}${errorDetails ? ' - ' + errorDetails : ''}`);
+        }
       }
 
       const data = await response.json();
