@@ -109,25 +109,39 @@ class YouTubeApiService {
       });
 
       const response = await fetch(`${searchUrl}?${params}`);
-      
+
       if (!response.ok) {
-        throw new Error(`YouTube API error: ${response.status}`);
+        throw new Error(`YouTube API error: ${response.status} ${response.statusText}`);
       }
 
       const data = await response.json();
-      
+
+      // Validate response structure
+      if (!data || !Array.isArray(data.items)) {
+        console.warn('Invalid YouTube search response structure:', data);
+        throw new Error('Invalid search response structure');
+      }
+
+      // Filter out items without proper video IDs
+      const validItems = data.items.filter((item: any) => item.id?.videoId);
+
+      if (validItems.length === 0) {
+        console.warn('No valid video items found in search results');
+        return [];
+      }
+
       // Get video details including duration
-      const videoIds = data.items.map((item: any) => item.id.videoId).join(',');
+      const videoIds = validItems.map((item: any) => item.id.videoId).join(',');
       const videoDetails = await this.getVideoDetails(videoIds);
 
-      return data.items.map((item: any, index: number) => ({
+      return validItems.map((item: any, index: number) => ({
         videoId: item.id.videoId,
-        title: item.snippet.title,
-        channelTitle: item.snippet.channelTitle,
-        thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default.url,
+        title: item.snippet?.title || 'Unknown Title',
+        channelTitle: item.snippet?.channelTitle || 'Unknown Artist',
+        thumbnail: item.snippet?.thumbnails?.high?.url || item.snippet?.thumbnails?.default?.url || '',
         duration: videoDetails[index]?.duration || '0:00',
-        publishedAt: item.snippet.publishedAt,
-        viewCount: videoDetails[index]?.viewCount
+        publishedAt: item.snippet?.publishedAt || new Date().toISOString(),
+        viewCount: videoDetails[index]?.viewCount || '0'
       }));
 
     } catch (error) {
