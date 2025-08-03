@@ -190,7 +190,7 @@ const indianPopularTracks: YouTubeTrack[] = [
 
 export class YouTubeService {
   private static instance: YouTubeService;
-  
+
   static getInstance(): YouTubeService {
     if (!YouTubeService.instance) {
       YouTubeService.instance = new YouTubeService();
@@ -198,27 +198,62 @@ export class YouTubeService {
     return YouTubeService.instance;
   }
 
-  async getPopularTracks(): Promise<YouTubeTrack[]> {
+  private filterTracksByPreferences(tracks: YouTubeTrack[], languages?: string[], genres?: string[]): YouTubeTrack[] {
+    if (!languages && !genres) return tracks;
+
+    return tracks.filter(track => {
+      const languageMatch = !languages || languages.includes(track.language || 'en');
+      const genreMatch = !genres || genres.includes(track.genre || 'pop');
+      return languageMatch || genreMatch; // Show if either language or genre matches
+    });
+  }
+
+  async getPopularTracks(userLanguages?: string[], userGenres?: string[]): Promise<YouTubeTrack[]> {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 500));
-    return mockPopularTracks;
+
+    const filtered = this.filterTracksByPreferences(indianPopularTracks, userLanguages, userGenres);
+
+    // If no matches, return some popular tracks anyway
+    if (filtered.length === 0) {
+      return indianPopularTracks.slice(0, 10);
+    }
+
+    return filtered;
   }
 
-  async getTrendingTracks(): Promise<YouTubeTrack[]> {
-    // Return shuffled popular tracks for trending
-    const tracks = [...mockPopularTracks];
-    return tracks.sort(() => Math.random() - 0.5).slice(0, 6);
+  async getTrendingTracks(userLanguages?: string[], userGenres?: string[]): Promise<YouTubeTrack[]> {
+    // Get tracks based on preferences first
+    const baseTracksPromise = this.getPopularTracks(userLanguages, userGenres);
+    const baseTracks = await baseTracksPromise;
+
+    // Return shuffled tracks for trending, prioritizing user preferences
+    const shuffled = [...baseTracks];
+    return shuffled.sort(() => Math.random() - 0.5).slice(0, 6);
   }
 
-  async searchTracks(query: string): Promise<YouTubeTrack[]> {
+  async getTracksByGenre(genre: string): Promise<YouTubeTrack[]> {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    return indianPopularTracks.filter(track => track.genre === genre);
+  }
+
+  async getTracksByLanguage(language: string): Promise<YouTubeTrack[]> {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    return indianPopularTracks.filter(track => track.language === language);
+  }
+
+  async searchTracks(query: string, userLanguages?: string[], userGenres?: string[]): Promise<YouTubeTrack[]> {
     // Simple mock search - filter by title or artist
-    const filteredTracks = mockPopularTracks.filter(track => 
+    const baseResults = indianPopularTracks.filter(track =>
       track.title.toLowerCase().includes(query.toLowerCase()) ||
       track.artist.toLowerCase().includes(query.toLowerCase())
     );
-    
+
+    // Apply user preference filtering
+    const filtered = this.filterTracksByPreferences(baseResults, userLanguages, userGenres);
+
     await new Promise(resolve => setTimeout(resolve, 300));
-    return filteredTracks;
+    return filtered;
   }
 
   // Get the audio stream URL (in production, you'd use youtube-dl or similar)
