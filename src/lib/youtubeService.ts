@@ -215,7 +215,7 @@ export class YouTubeService {
       // Try to get real trending music from YouTube API
       const apiResults = await youtubeApiService.getTrendingMusic('IN');
 
-      if (apiResults.length > 0) {
+      if (apiResults && apiResults.length > 0) {
         // Convert API results to our YouTubeTrack format
         const convertedTracks = apiResults.map(result => ({
           id: result.videoId,
@@ -233,7 +233,7 @@ export class YouTubeService {
         return filtered.length > 0 ? filtered : convertedTracks.slice(0, 10);
       }
     } catch (error) {
-      console.log('YouTube API not available, using demo data');
+      console.log('YouTube API not available, using demo data:', error);
     }
 
     // Fallback to demo data
