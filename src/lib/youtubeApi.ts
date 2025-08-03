@@ -269,16 +269,27 @@ class YouTubeApiService {
       });
 
       const response = await fetch(`${trendingUrl}?${params}`);
+
+      if (!response.ok) {
+        throw new Error(`YouTube API error: ${response.status} ${response.statusText}`);
+      }
+
       const data = await response.json();
+
+      // Validate response structure
+      if (!data || !Array.isArray(data.items)) {
+        console.warn('Invalid YouTube API response structure:', data);
+        throw new Error('Invalid API response structure');
+      }
 
       return data.items.map((item: any) => ({
         videoId: item.id,
-        title: item.snippet.title,
-        channelTitle: item.snippet.channelTitle,
-        thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default.url,
-        duration: this.formatDuration(item.contentDetails.duration),
-        publishedAt: item.snippet.publishedAt,
-        viewCount: item.statistics.viewCount
+        title: item.snippet?.title || 'Unknown Title',
+        channelTitle: item.snippet?.channelTitle || 'Unknown Artist',
+        thumbnail: item.snippet?.thumbnails?.high?.url || item.snippet?.thumbnails?.default?.url || '',
+        duration: this.formatDuration(item.contentDetails?.duration || 'PT0S'),
+        publishedAt: item.snippet?.publishedAt || new Date().toISOString(),
+        viewCount: item.statistics?.viewCount || '0'
       }));
 
     } catch (error) {
