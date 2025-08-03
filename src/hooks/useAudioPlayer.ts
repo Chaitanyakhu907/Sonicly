@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { AudioFile } from "./useFileManager";
+import { demoAudioGenerator } from "@/lib/demoAudio";
 
 interface AudioPlayerState {
   currentTrack: AudioFile | null;
@@ -106,7 +107,7 @@ export const useAudioPlayer = () => {
           import("@/hooks/use-toast").then(({ toast }) => {
             toast({
               title: `🎵 Now Playing: ${track.name || track.title}`,
-              description: `by ${track.artist}\n\n�� Demo Mode: In production, this would stream from YouTube without ads!`,
+              description: `by ${track.artist}\n\n⚡ Demo Mode: In production, this would stream from YouTube without ads!`,
               duration: 5000,
             });
           }).catch(() => {
