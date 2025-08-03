@@ -254,9 +254,21 @@ const DiscoverySection: React.FC<DiscoverySectionProps> = ({
             className="text-2xl font-bold"
             style={{ color: theme.colors.text }}
           >
-            ��� Popular This Week
+            🔥 Popular This Week
           </h2>
           <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className={cn(
+                "text-blue-500 hover:text-blue-400 hover:bg-blue-500/10",
+                !isUsingRealApi && "animate-pulse"
+              )}
+              onClick={() => setShowApiConfigModal(true)}
+            >
+              <Key className="h-4 w-4 mr-2" />
+              {isUsingRealApi ? 'API Configured' : 'Setup API Keys'}
+            </Button>
             <Button
               variant="ghost"
               size="sm"
