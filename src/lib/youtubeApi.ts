@@ -205,7 +205,7 @@ class YouTubeApiService {
 
   // Custom backend service for audio extraction
   private async getCustomAudioStream(videoId: string): Promise<YouTubeAudioStream | null> {
-    const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
+    const backendUrl = this.getEnvVar('REACT_APP_BACKEND_URL') || localStorage.getItem('custom_backend_url') || 'http://localhost:3001';
     
     try {
       const response = await fetch(`${backendUrl}/api/youtube/audio/${videoId}`);
