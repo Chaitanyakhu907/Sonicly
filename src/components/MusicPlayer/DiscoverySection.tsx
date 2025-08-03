@@ -26,7 +26,9 @@ const DiscoverySection: React.FC<DiscoverySectionProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [hoveredTrack, setHoveredTrack] = useState<string | null>(null);
   const [showPreferencesModal, setShowPreferencesModal] = useState(false);
+  const [showApiConfigModal, setShowApiConfigModal] = useState(false);
   const [userPreferences, setUserPreferences] = useState(userPreferencesService.getPreferences());
+  const [isUsingRealApi, setIsUsingRealApi] = useState(false);
 
   useEffect(() => {
     const loadTracks = async () => {
