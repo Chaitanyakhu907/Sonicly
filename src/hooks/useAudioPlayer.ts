@@ -46,17 +46,34 @@ export const useAudioPlayer = () => {
     };
 
     const handleError = (e: any) => {
-      console.error("Audio loading error:", e);
+      const target = e.target as HTMLAudioElement;
+      let errorMessage = "Unknown audio error";
+
+      if (target && target.error) {
+        switch (target.error.code) {
+          case target.error.MEDIA_ERR_ABORTED:
+            errorMessage = "Audio loading was aborted";
+            break;
+          case target.error.MEDIA_ERR_NETWORK:
+            errorMessage = "Network error occurred while loading audio";
+            break;
+          case target.error.MEDIA_ERR_DECODE:
+            errorMessage = "Audio decoding error";
+            break;
+          case target.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+            errorMessage = "Audio format not supported";
+            break;
+          default:
+            errorMessage = `Audio error code: ${target.error.code}`;
+        }
+      }
+
+      console.error("Audio loading error:", errorMessage, "Source:", target?.src);
+
       setState((prev) => ({
         ...prev,
         isPlaying: false,
       }));
-
-      // Try fallback audio for YouTube tracks
-      if (audio.src.includes('youtube') || audio.src.includes('samplelib')) {
-        console.log("Trying fallback audio...");
-        audio.src = "data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmAUCL+D1p+AMj0EIIrF7tiIJwwYaLDn5KhiGBA5lN7xwm8fAjB5w+/agTPeAyF2x/LaXgYQWKfh7LdGWAQgmKnhzxENlwU5kNq0zlYGEF6c1vmwY2hcGASX1U3LU2KFmWkH3U1fJUHNeTJ9VjFP0e1VzB9HpfFGLbpF0U1XfBdGpO1CZnFeSF2n4MdQ0ehY3h6leTNtLnNIWnPpQjGVW1wj1b2xNKnqZDGCOHqmjHJIgTW5t2IcVlPJr4vp1qgLdvEYYHYA";
-      }
     };
 
     audio.addEventListener("timeupdate", handleTimeUpdate);
