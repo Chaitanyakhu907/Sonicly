@@ -415,18 +415,19 @@ const ApiKeyConfiguration: React.FC<ApiKeyConfigurationProps> = ({
               </Alert>
             )}
 
-            {connectionStatus === 'error' && (
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
+            {connectionStatus === 'error' && selectedService !== 'demo' && (
+              <Alert className="border-blue-200 bg-blue-50">
+                <Info className="h-4 w-4 text-blue-600" />
+                <AlertDescription className="text-blue-800">
                   <div className="space-y-2">
-                    <p>Connection failed. Common solutions:</p>
+                    <p><strong>YouTube API Test Failed</strong> - This is expected without a valid API key.</p>
+                    <p className="text-sm">To use real YouTube music, you need to:</p>
                     <ul className="list-disc list-inside text-sm space-y-1">
-                      <li>Ensure YouTube Data API v3 is enabled in Google Cloud Console</li>
-                      <li>Check that your API key is correct (no extra spaces)</li>
-                      <li>Verify API key restrictions (referrer, IP, etc.)</li>
-                      <li>Check if you've exceeded your quota (10,000 requests/day)</li>
+                      <li>Get a YouTube Data API v3 key from Google Cloud Console</li>
+                      <li>Enable the YouTube Data API v3 service</li>
+                      <li>Enter your API key above and test again</li>
                     </ul>
+                    <p className="text-sm font-medium">Or simply use Demo Mode for immediate access!</p>
                   </div>
                 </AlertDescription>
               </Alert>
