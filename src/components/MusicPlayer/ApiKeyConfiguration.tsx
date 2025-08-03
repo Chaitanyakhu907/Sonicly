@@ -171,12 +171,21 @@ const ApiKeyConfiguration: React.FC<ApiKeyConfigurationProps> = ({
 
         <div className="space-y-6">
           {/* Status Alert */}
-          <Alert>
-            <Info className="h-4 w-4" />
-            <AlertDescription>
-              Configure API keys to stream real music from YouTube. Without API keys, the app will use demo audio tones.
+          <Alert className="border-blue-200 bg-blue-50">
+            <Info className="h-4 w-4 text-blue-600" />
+            <AlertDescription className="text-blue-800">
+              <strong>Quick Start:</strong> You can use the app immediately in Demo Mode (no setup required), or configure YouTube API keys to stream real music.
             </AlertDescription>
           </Alert>
+
+          {selectedService === 'demo' && (
+            <Alert className="border-green-200 bg-green-50">
+              <CheckCircle2 className="h-4 w-4 text-green-600" />
+              <AlertDescription className="text-green-800">
+                <strong>Demo Mode Selected:</strong> The app will work with pleasant audio tones and a curated music catalog. Perfect for testing the interface!
+              </AlertDescription>
+            </Alert>
+          )}
 
           {/* Service Selection */}
           <div className="space-y-4">
