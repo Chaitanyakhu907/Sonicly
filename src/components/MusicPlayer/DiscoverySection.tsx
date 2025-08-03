@@ -408,6 +408,18 @@ const DiscoverySection: React.FC<DiscoverySectionProps> = ({
         </section>
       )}
 
+      {/* API Configuration Modal */}
+      <ApiKeyConfiguration
+        isOpen={showApiConfigModal}
+        onClose={() => setShowApiConfigModal(false)}
+        onConfigured={() => {
+          setShowApiConfigModal(false);
+          setIsUsingRealApi(true);
+          // Reload tracks with new API configuration
+          window.location.reload();
+        }}
+      />
+
       {/* User Preferences Modal */}
       <UserPreferencesModal
         isOpen={showPreferencesModal}
