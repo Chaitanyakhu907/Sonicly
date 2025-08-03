@@ -267,7 +267,7 @@ export class YouTubeService {
       // Try real YouTube search first
       const apiResults = await youtubeApiService.searchVideos(query, 20);
 
-      if (apiResults.length > 0) {
+      if (apiResults && apiResults.length > 0) {
         const convertedTracks = apiResults.map(result => ({
           id: result.videoId,
           title: result.title,
@@ -284,7 +284,7 @@ export class YouTubeService {
         return filtered;
       }
     } catch (error) {
-      console.log('YouTube API search not available, using demo data');
+      console.log('YouTube API search not available, using demo data:', error);
     }
 
     // Fallback to demo search
