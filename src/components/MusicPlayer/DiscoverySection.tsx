@@ -53,6 +53,10 @@ const DiscoverySection: React.FC<DiscoverySectionProps> = ({
     if (userPreferencesService.needsSetup()) {
       setShowPreferencesModal(true);
     }
+
+    // Check if API is configured
+    const hasApiKey = localStorage.getItem('youtube_api_key');
+    setIsUsingRealApi(!!hasApiKey);
   }, [userPreferences]);
 
   const handlePreferencesComplete = (newPreferences: any) => {
