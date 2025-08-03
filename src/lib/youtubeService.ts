@@ -385,14 +385,16 @@ export class YouTubeService {
   }
 
   // Convert YouTube track to AudioFile format for the player
-  convertToAudioFile(track: YouTubeTrack): any {
+  async convertToAudioFile(track: YouTubeTrack): Promise<any> {
+    const audioUrl = await this.getAudioStreamUrl(track.videoId);
+
     return {
       id: track.id,
       name: track.title,
       artist: track.artist,
       album: "YouTube Music",
       duration: track.duration,
-      url: this.getAudioStreamUrl(track.videoId),
+      url: audioUrl,
       thumbnail: track.thumbnail,
       isYouTube: true,
       videoId: track.videoId
