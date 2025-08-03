@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { youtubeApiService } from "@/lib/youtubeApi";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 interface ApiKeyConfigurationProps {
   isOpen: boolean;
