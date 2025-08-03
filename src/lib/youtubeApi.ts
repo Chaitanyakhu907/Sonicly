@@ -165,8 +165,9 @@ class YouTubeApiService {
 
   // RapidAPI YouTube to MP3 service
   private async getRapidApiAudioStream(videoId: string): Promise<YouTubeAudioStream | null> {
-    const rapidApiKey = process.env.REACT_APP_RAPIDAPI_KEY;
-    
+    // Safely get RapidAPI key
+    const rapidApiKey = this.getEnvVar('REACT_APP_RAPIDAPI_KEY') || localStorage.getItem('rapidapi_key');
+
     if (!rapidApiKey) {
       console.warn('RapidAPI key not configured');
       return null;
