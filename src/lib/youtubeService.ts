@@ -243,13 +243,23 @@ export class YouTubeService {
   }
 
   async getTrendingTracks(userLanguages?: string[], userGenres?: string[]): Promise<YouTubeTrack[]> {
-    // Get tracks based on preferences first
-    const baseTracksPromise = this.getPopularTracks(userLanguages, userGenres);
-    const baseTracks = await baseTracksPromise;
+    try {
+      // Get tracks based on preferences first
+      const baseTracks = await this.getPopularTracks(userLanguages, userGenres);
 
-    // Return shuffled tracks for trending, prioritizing user preferences
-    const shuffled = [...baseTracks];
-    return shuffled.sort(() => Math.random() - 0.5).slice(0, 6);
+      if (!baseTracks || baseTracks.length === 0) {
+        console.warn('No base tracks available for trending');
+        return indianPopularTracks.slice(0, 6);
+      }
+
+      // Return shuffled tracks for trending, prioritizing user preferences
+      const shuffled = [...baseTracks];
+      return shuffled.sort(() => Math.random() - 0.5).slice(0, 6);
+    } catch (error) {
+      console.error('Error getting trending tracks:', error);
+      // Fallback to demo data
+      return indianPopularTracks.slice(0, 6);
+    }
   }
 
   async getTracksByGenre(genre: string): Promise<YouTubeTrack[]> {
