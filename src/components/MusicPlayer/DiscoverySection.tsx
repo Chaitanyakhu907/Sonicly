@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Play, Heart, MoreHorizontal, Shuffle, Clock } from "lucide-react";
+import { Play, Heart, MoreHorizontal, Shuffle, Clock, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { youtubeService, YouTubeTrack } from "@/lib/youtubeService";
+import { userPreferencesService } from "@/lib/userPreferences";
+import UserPreferencesModal from "./UserPreferencesModal";
 import { cn } from "@/lib/utils";
 
 interface DiscoverySectionProps {
