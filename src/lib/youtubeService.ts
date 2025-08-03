@@ -9,6 +9,8 @@ export interface YouTubeTrack {
   duration: string;
   videoId: string;
   url: string;
+  genre?: string;
+  language?: string;
 }
 
 // Mock data with Indian music content (in production, this would come from YouTube API)
