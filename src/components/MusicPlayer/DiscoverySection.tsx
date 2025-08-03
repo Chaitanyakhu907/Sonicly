@@ -227,19 +227,30 @@ const DiscoverySection: React.FC<DiscoverySectionProps> = ({
       {/* Popular This Week */}
       <section>
         <div className="flex items-center justify-between mb-6">
-          <h2 
+          <h2
             className="text-2xl font-bold"
             style={{ color: theme.colors.text }}
           >
             🔥 Popular This Week
           </h2>
-          <Button 
-            variant="ghost" 
-            className="text-green-500 hover:text-green-400 hover:bg-green-500/10"
-          >
-            <Shuffle className="h-4 w-4 mr-2" />
-            Shuffle Play
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-purple-500 hover:text-purple-400 hover:bg-purple-500/10"
+              onClick={() => setShowPreferencesModal(true)}
+            >
+              <Settings className="h-4 w-4 mr-2" />
+              Preferences
+            </Button>
+            <Button
+              variant="ghost"
+              className="text-green-500 hover:text-green-400 hover:bg-green-500/10"
+            >
+              <Shuffle className="h-4 w-4 mr-2" />
+              Shuffle Play
+            </Button>
+          </div>
         </div>
         
         <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
