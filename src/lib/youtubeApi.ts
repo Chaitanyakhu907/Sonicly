@@ -29,10 +29,30 @@ class YouTubeApiService {
 
   constructor() {
     // Default configuration - user can override with their API key
+    // Handle browser environment where process.env might not be available
+    const getEnvVar = (key: string, defaultValue: string = '') => {
+      if (typeof window !== 'undefined') {
+        // Browser environment - check localStorage first, then window.env
+        const stored = localStorage.getItem(key.toLowerCase().replace('react_app_', ''));
+        if (stored) return stored;
+
+        // Check if environment variables were set on window object
+        const windowEnv = (window as any).process?.env?.[key];
+        if (windowEnv) return windowEnv;
+      }
+
+      // Node.js environment or build-time environment variables
+      try {
+        return process?.env?.[key] || defaultValue;
+      } catch {
+        return defaultValue;
+      }
+    };
+
     this.config = {
-      apiKey: process.env.REACT_APP_YOUTUBE_API_KEY || '',
+      apiKey: getEnvVar('REACT_APP_YOUTUBE_API_KEY', ''),
       baseUrl: 'https://www.googleapis.com/youtube/v3',
-      audioExtractionService: process.env.REACT_APP_AUDIO_EXTRACTION_SERVICE || 'rapidapi'
+      audioExtractionService: getEnvVar('REACT_APP_AUDIO_EXTRACTION_SERVICE', 'demo') as any
     };
   }
 
