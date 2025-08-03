@@ -330,6 +330,43 @@ const DiscoverySection: React.FC<DiscoverySectionProps> = ({
           </div>
         </div>
       </section>
+
+      {/* User Preferences Indicators */}
+      {userPreferences.hasCompletedSetup && (
+        <section className="mt-8">
+          <div className="flex flex-wrap gap-2 justify-center">
+            <div className="text-sm text-gray-500">Your preferences:</div>
+            {userPreferences.languages.map(langCode => {
+              const lang = userPreferencesService.getLanguageByCode(langCode);
+              return lang ? (
+                <Badge key={langCode} variant="outline" className="text-xs">
+                  {lang.flag} {lang.name}
+                </Badge>
+              ) : null;
+            })}
+            {userPreferences.genres.slice(0, 4).map(genreId => {
+              const genre = userPreferencesService.getGenreById(genreId);
+              return genre ? (
+                <Badge key={genreId} variant="outline" className="text-xs">
+                  {genre.emoji} {genre.name}
+                </Badge>
+              ) : null;
+            })}
+            {userPreferences.genres.length > 4 && (
+              <Badge variant="outline" className="text-xs">
+                +{userPreferences.genres.length - 4} more
+              </Badge>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* User Preferences Modal */}
+      <UserPreferencesModal
+        isOpen={showPreferencesModal}
+        onClose={() => setShowPreferencesModal(false)}
+        onComplete={handlePreferencesComplete}
+      />
     </div>
   );
 };
