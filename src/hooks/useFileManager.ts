@@ -3,13 +3,17 @@ import { parseBlob } from "music-metadata-browser";
 
 export interface AudioFile {
   id: string;
-  file: File;
+  file?: File;
   url: string;
-  title: string;
+  title?: string;
+  name?: string; // For backward compatibility
   artist: string;
   album: string;
-  duration: number;
+  duration: number | string;
   albumArt?: string;
+  thumbnail?: string;
+  isYouTube?: boolean;
+  videoId?: string;
 }
 
 export const useFileManager = () => {
