@@ -163,11 +163,23 @@ class YouTubeApiService {
       });
 
       const response = await fetch(`${detailsUrl}?${params}`);
+
+      if (!response.ok) {
+        console.warn(`YouTube video details API error: ${response.status}`);
+        return [];
+      }
+
       const data = await response.json();
 
+      // Validate response structure
+      if (!data || !Array.isArray(data.items)) {
+        console.warn('Invalid video details response structure:', data);
+        return [];
+      }
+
       return data.items.map((item: any) => ({
-        duration: this.formatDuration(item.contentDetails.duration),
-        viewCount: item.statistics.viewCount
+        duration: this.formatDuration(item.contentDetails?.duration || 'PT0S'),
+        viewCount: item.statistics?.viewCount || '0'
       }));
 
     } catch (error) {
