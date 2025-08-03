@@ -188,6 +188,15 @@ const ApiKeyConfiguration: React.FC<ApiKeyConfigurationProps> = ({
             </Alert>
           )}
 
+          {selectedService !== 'demo' && !youtubeApiKey && (
+            <Alert className="border-orange-200 bg-orange-50">
+              <Info className="h-4 w-4 text-orange-600" />
+              <AlertDescription className="text-orange-800">
+                <strong>Note:</strong> Testing without an API key will show a "403 error" - this is normal! You can either get a YouTube API key (instructions below) or use Demo Mode for immediate access.
+              </AlertDescription>
+            </Alert>
+          )}
+
           {/* Service Selection */}
           <div className="space-y-4">
             <Label className="text-lg font-semibold flex items-center gap-2">
