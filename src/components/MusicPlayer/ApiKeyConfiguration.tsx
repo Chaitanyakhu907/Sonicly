@@ -51,35 +51,64 @@ const ApiKeyConfiguration: React.FC<ApiKeyConfigurationProps> = ({
   }, []);
 
   const testConnection = async () => {
+    if (!youtubeApiKey.trim()) {
+      toast.error("API Key Required", {
+        description: "Please enter your YouTube Data API v3 key before testing"
+      });
+      return;
+    }
+
     setIsTestingConnection(true);
     setConnectionStatus('testing');
 
     try {
       // Configure the service
       youtubeApiService.setConfig({
-        apiKey: youtubeApiKey,
+        apiKey: youtubeApiKey.trim(),
         audioExtractionService: selectedService
       });
 
-      // Test YouTube API
-      const testResults = await youtubeApiService.searchVideos('test music', 1);
-      
-      if (testResults.length > 0) {
+      // Test YouTube API with a simple search
+      const testResults = await youtubeApiService.searchVideos('music', 1);
+
+      if (testResults && testResults.length > 0) {
         setConnectionStatus('success');
-        toast.success("Connection successful!", {
-          description: "YouTube API is working properly"
+        toast.success("✅ Connection successful!", {
+          description: `Found ${testResults.length} result(s). YouTube API is working properly.`
         });
       } else {
         setConnectionStatus('error');
-        toast.error("Connection failed", {
-          description: "Unable to fetch data from YouTube API"
+        toast.error("❌ No results found", {
+          description: "API connected but returned no results. Check your search parameters."
         });
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error('API test error:', error);
       setConnectionStatus('error');
-      toast.error("Connection failed", {
-        description: "Please check your API keys and try again"
-      });
+
+      // Extract useful error message
+      const errorMessage = error.message || error.toString();
+
+      if (errorMessage.includes('403')) {
+        toast.error("❌ API Access Denied (403)", {
+          description: errorMessage,
+          duration: 8000
+        });
+      } else if (errorMessage.includes('400')) {
+        toast.error("❌ Invalid Request (400)", {
+          description: "Check your API key format and try again"
+        });
+      } else if (errorMessage.includes('429')) {
+        toast.error("❌ Quota Exceeded (429)", {
+          description: "You've reached your daily API limit. Try again tomorrow."
+        });
+      } else {
+        toast.error("❌ Connection failed", {
+          description: errorMessage.length > 100 ?
+            "Please check your API key and try again" :
+            errorMessage
+        });
+      }
     } finally {
       setIsTestingConnection(false);
     }
