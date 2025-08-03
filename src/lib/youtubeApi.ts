@@ -68,6 +68,27 @@ class YouTubeApiService {
     this.config = { ...this.config, ...config };
   }
 
+  // Helper method to safely get environment variables
+  private getEnvVar(key: string, defaultValue: string = ''): string {
+    if (typeof window !== 'undefined') {
+      // Browser environment - check localStorage first
+      const storageKey = key.toLowerCase().replace('react_app_', '').replace(/_/g, '_');
+      const stored = localStorage.getItem(storageKey);
+      if (stored) return stored;
+
+      // Check if environment variables were set on window object
+      const windowEnv = (window as any).process?.env?.[key];
+      if (windowEnv) return windowEnv;
+    }
+
+    // Node.js environment or build-time environment variables
+    try {
+      return (globalThis as any).process?.env?.[key] || defaultValue;
+    } catch {
+      return defaultValue;
+    }
+  }
+
   // Search for videos using YouTube Data API v3
   async searchVideos(query: string, maxResults: number = 20): Promise<YouTubeSearchResult[]> {
     if (!this.config.apiKey) {
