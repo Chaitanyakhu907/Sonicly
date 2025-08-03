@@ -263,17 +263,98 @@ export class YouTubeService {
   }
 
   async searchTracks(query: string, userLanguages?: string[], userGenres?: string[]): Promise<YouTubeTrack[]> {
-    // Simple mock search - filter by title or artist
+    try {
+      // Try real YouTube search first
+      const apiResults = await youtubeApiService.searchVideos(query, 20);
+
+      if (apiResults.length > 0) {
+        const convertedTracks = apiResults.map(result => ({
+          id: result.videoId,
+          title: result.title,
+          artist: result.channelTitle,
+          thumbnail: result.thumbnail,
+          duration: result.duration,
+          videoId: result.videoId,
+          url: `https://www.youtube.com/watch?v=${result.videoId}`,
+          genre: this.inferGenre(result.title, result.channelTitle),
+          language: this.inferLanguage(result.title, result.channelTitle)
+        }));
+
+        const filtered = this.filterTracksByPreferences(convertedTracks, userLanguages, userGenres);
+        return filtered;
+      }
+    } catch (error) {
+      console.log('YouTube API search not available, using demo data');
+    }
+
+    // Fallback to demo search
     const baseResults = indianPopularTracks.filter(track =>
       track.title.toLowerCase().includes(query.toLowerCase()) ||
       track.artist.toLowerCase().includes(query.toLowerCase())
     );
 
-    // Apply user preference filtering
     const filtered = this.filterTracksByPreferences(baseResults, userLanguages, userGenres);
-
     await new Promise(resolve => setTimeout(resolve, 300));
     return filtered;
+  }
+
+  // Helper method to infer genre from title and artist
+  private inferGenre(title: string, artist: string): string {
+    const text = `${title} ${artist}`.toLowerCase();
+
+    if (text.includes('bollywood') || text.includes('hindi') || text.includes('arijit') || text.includes('shreya')) {
+      return 'bollywood';
+    }
+    if (text.includes('classical') || text.includes('raag') || text.includes('carnatic')) {
+      return 'classical';
+    }
+    if (text.includes('devotional') || text.includes('bhajan') || text.includes('hanuman') || text.includes('krishna')) {
+      return 'devotional';
+    }
+    if (text.includes('folk') || text.includes('punjabi') || text.includes('bhangra')) {
+      return 'folk';
+    }
+    if (text.includes('qawwali') || text.includes('sufi')) {
+      return 'qawwali';
+    }
+    if (text.includes('kpop') || text.includes('bts') || text.includes('blackpink')) {
+      return 'kpop';
+    }
+
+    return 'pop'; // Default
+  }
+
+  // Helper method to infer language from title and artist
+  private inferLanguage(title: string, artist: string): string {
+    const text = `${title} ${artist}`.toLowerCase();
+
+    // Check for Hindi indicators
+    if (text.includes('arijit') || text.includes('shreya') || text.includes('bollywood') ||
+        text.includes('hindi') || /[\u0900-\u097F]/.test(title)) {
+      return 'hi';
+    }
+
+    // Check for Tamil indicators
+    if (text.includes('tamil') || text.includes('kollywood') || /[\u0B80-\u0BFF]/.test(title)) {
+      return 'ta';
+    }
+
+    // Check for Telugu indicators
+    if (text.includes('telugu') || text.includes('tollywood') || /[\u0C00-\u0C7F]/.test(title)) {
+      return 'te';
+    }
+
+    // Check for Punjabi indicators
+    if (text.includes('punjabi') || text.includes('bhangra') || text.includes('sidhu')) {
+      return 'pa';
+    }
+
+    // Check for Korean
+    if (text.includes('kpop') || text.includes('bts') || text.includes('korean')) {
+      return 'ko';
+    }
+
+    return 'en'; // Default to English
   }
 
   // Get the audio stream URL (in production, you'd use youtube-dl or similar)
