@@ -79,13 +79,13 @@ export const useAudioPlayer = () => {
       if (track.isYouTube) {
         console.log("Loading YouTube track:", track.name || track.title);
 
-        // Use a working demo audio URL for YouTube tracks
-        const demoAudioUrl = "https://samplelib.com/lib/preview/mp3/sample-15s.mp3";
+        // Use a base64 encoded short audio clip for demo
+        const demoAudioUrl = "data:audio/mp3;base64,//NQxAASCVIIAUEQAD/JARhgfp5/mP/xCD47ffTn/6P2/tAI4fef//6gCMH3//6gAjB9//+oAIwff//qACMH3//6gAjB9//+oALB8H1//////TYxAwP+vSq//ygwNOLdF3T3Ppz/wZfDUXVUAAAAA4fBNWRyh5JyHdF3T3Ppz/wZe/DUXVj///xSBgf9e//zgwNDHzk/f6P6H9//tAR4fef/+oADQ9/++oDYxMH3//6gAw3ff///KDA049036f//DUXZcAAAAA4fB9WRyh5L7HdF3T3Ppz/wZf/DUXVkf//8UgYH/Xv/84MDQx85P3+j+h/f/7QEeH3n//qAA0Pf/vqA2MTB9//+oAMN33//yAAA";
         audioRef.current.src = demoAudioUrl;
 
         // Show demo notification
         setTimeout(() => {
-          alert(`🎵 Demo Mode: Playing "${track.name || track.title}" by ${track.artist}\n\nNote: This is playing demo audio. In production, this would stream the actual song from YouTube without ads.`);
+          console.log(`🎵 Demo Mode: Playing "${track.name || track.title}" by ${track.artist}`);
         }, 100);
       } else {
         // Regular local audio file
