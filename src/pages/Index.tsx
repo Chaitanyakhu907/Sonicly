@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Header from "@/components/MusicPlayer/Header";
 import PlaylistTable from "@/components/MusicPlayer/PlaylistTable";
 import PlayerControls from "@/components/MusicPlayer/PlayerControls";
+import DiscoverySection from "@/components/MusicPlayer/DiscoverySection";
 import { useFileManager } from "../hooks/useFileManager";
 import { useAudioPlayer } from "../hooks/useAudioPlayer";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -9,6 +10,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { UpgradePlans } from "@/components/subscription/UpgradePlans";
 import { useSubscriptionData } from "@/lib/subscriptionData";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Index = () => {
   const { currentTheme } = useTheme();
