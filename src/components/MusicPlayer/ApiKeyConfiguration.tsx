@@ -164,10 +164,25 @@ const ApiKeyConfiguration: React.FC<ApiKeyConfigurationProps> = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-xl">
-            <Key className="h-6 w-6 text-blue-500" />
-            Configure YouTube API for Real Music Streaming
-          </DialogTitle>
+          <div className="flex items-center justify-between">
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <Key className="h-6 w-6 text-blue-500" />
+              Configure YouTube API for Real Music Streaming
+            </DialogTitle>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSelectedService('demo');
+                testDemoMode();
+                setTimeout(() => {
+                  saveConfiguration();
+                }, 500);
+              }}
+              className="bg-purple-50 hover:bg-purple-100 border-purple-200 text-purple-700"
+            >
+              🎵 Quick Start Demo
+            </Button>
+          </div>
         </DialogHeader>
 
         <div className="space-y-6">
