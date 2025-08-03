@@ -289,6 +289,7 @@ const ApiKeyConfiguration: React.FC<ApiKeyConfigurationProps> = ({
               />
               <p className="text-sm text-gray-500">
                 Required for searching and fetching video metadata from YouTube.
+                <span className="text-purple-600 font-medium"> Leave blank to use Demo Mode.</span>
               </p>
             </div>
 
