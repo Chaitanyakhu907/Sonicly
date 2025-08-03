@@ -120,6 +120,13 @@ export const useAudioPlayer = () => {
 
   const play = useCallback(async () => {
     if (audioRef.current && state.currentTrack) {
+      // Don't try to play YouTube tracks since they don't have audio sources
+      if (state.currentTrack.isYouTube) {
+        setState((prev) => ({ ...prev, isPlaying: true }));
+        console.log("Demo: Playing YouTube track", state.currentTrack.name || state.currentTrack.title);
+        return;
+      }
+
       try {
         await audioRef.current.play();
         setState((prev) => ({ ...prev, isPlaying: true }));
