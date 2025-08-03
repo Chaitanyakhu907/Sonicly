@@ -64,9 +64,25 @@ const DiscoverySection: React.FC<DiscoverySectionProps> = ({
     setShowPreferencesModal(false);
   };
 
-  const handleTrackPlay = (track: YouTubeTrack) => {
-    const audioFile = youtubeService.convertToAudioFile(track);
-    onTrackSelect(audioFile);
+  const handleTrackPlay = async (track: YouTubeTrack) => {
+    try {
+      const audioFile = await youtubeService.convertToAudioFile(track);
+      onTrackSelect(audioFile);
+    } catch (error) {
+      console.error('Error converting track:', error);
+      // Fallback to basic track info
+      onTrackSelect({
+        id: track.id,
+        name: track.title,
+        artist: track.artist,
+        album: "YouTube Music",
+        duration: track.duration,
+        url: "",
+        thumbnail: track.thumbnail,
+        isYouTube: true,
+        videoId: track.videoId
+      });
+    }
   };
 
   const TrackCard = ({ track, size = "large" }: { track: YouTubeTrack; size?: "large" | "small" }) => (
@@ -238,7 +254,7 @@ const DiscoverySection: React.FC<DiscoverySectionProps> = ({
             className="text-2xl font-bold"
             style={{ color: theme.colors.text }}
           >
-            🔥 Popular This Week
+            ��� Popular This Week
           </h2>
           <div className="flex items-center gap-2">
             <Button
