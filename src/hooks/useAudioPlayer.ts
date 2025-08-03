@@ -97,18 +97,29 @@ export const useAudioPlayer = () => {
       if (track.isYouTube) {
         console.log("Loading YouTube track:", track.name || track.title);
 
-        // For YouTube tracks, we don't set an audio source to avoid loading errors
-        // In production, this would connect to a YouTube audio extraction service
-        audioRef.current.src = "";
+        // Generate demo audio for YouTube tracks
+        demoAudioGenerator.getDemoAudioForTrack(track.id, track.name || track.title || '')
+          .then(demoUrl => {
+            if (audioRef.current) {
+              audioRef.current.src = demoUrl;
+            }
+          })
+          .catch(error => {
+            console.error('Failed to generate demo audio:', error);
+            // Fallback to empty source
+            if (audioRef.current) {
+              audioRef.current.src = "";
+            }
+          });
 
         // Show demo notification using toast
         setTimeout(() => {
           // Import and use toast dynamically to avoid dependency issues
           import("@/hooks/use-toast").then(({ toast }) => {
             toast({
-              title: `🎵 Now Playing: ${track.name || track.title}`,
-              description: `by ${track.artist}\n\n⚡ Demo Mode: In production, this would stream from YouTube without ads!`,
-              duration: 5000,
+              title: `🎵 ${track.name || track.title}`,
+              description: `by ${track.artist} • Playing demo audio tone`,
+              duration: 4000,
             });
           }).catch(() => {
             // Fallback to console if toast is not available
