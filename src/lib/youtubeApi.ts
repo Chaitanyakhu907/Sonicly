@@ -89,6 +89,34 @@ class YouTubeApiService {
     }
   }
 
+  // Diagnose 403 errors with specific guidance
+  private diagnose403Error(errorMessage: string): string {
+    const message = errorMessage.toLowerCase();
+
+    if (message.includes('disabled') || message.includes('not enabled')) {
+      return 'The YouTube Data API v3 is not enabled for your project. Please enable it in the Google Cloud Console.';
+    }
+
+    if (message.includes('quota') || message.includes('exceeded')) {
+      return 'Your API quota has been exceeded. Check your quota limits in Google Cloud Console.';
+    }
+
+    if (message.includes('key') || message.includes('credentials')) {
+      return 'Invalid API key. Please check that your API key is correct and has the right permissions.';
+    }
+
+    if (message.includes('referer') || message.includes('referrer')) {
+      return 'API key is restricted by referrer. Check your API key restrictions in Google Cloud Console.';
+    }
+
+    if (message.includes('ip')) {
+      return 'API key is restricted by IP address. Check your API key restrictions in Google Cloud Console.';
+    }
+
+    // Default 403 guidance
+    return 'Access forbidden. Common causes: 1) API key not enabled for YouTube Data API v3, 2) Invalid API key, 3) API key restrictions. Check Google Cloud Console.';
+  }
+
   // Search for videos using YouTube Data API v3
   async searchVideos(query: string, maxResults: number = 20): Promise<YouTubeSearchResult[]> {
     if (!this.config.apiKey) {
