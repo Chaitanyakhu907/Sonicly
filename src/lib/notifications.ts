@@ -23,9 +23,9 @@ export class NotificationManager {
     return NotificationManager.instance;
   }
 
-  // Enhanced alert with emoji and styling
+  // Enhanced toast notification with emoji and styling
   show(options: NotificationOptions): void {
-    const { title, message, type = "info", emoji, action } = options;
+    const { title, message, type = "info", emoji, action, duration = 4000 } = options;
 
     const emojiMap = {
       success: "✅",
@@ -35,17 +35,35 @@ export class NotificationManager {
     };
 
     const finalEmoji = emoji || emojiMap[type];
-    let fullMessage = `${finalEmoji} ${title}\n\n${message}`;
 
-    if (action) {
-      fullMessage += `\n\n[${action.label}]`;
-    }
+    // Use sonner toast if available, otherwise fallback to console
+    if (typeof window !== 'undefined' && (window as any).toast) {
+      const toast = (window as any).toast;
 
-    // For now, use enhanced alert (in real app, would use toast library)
-    const result = confirm(fullMessage);
+      const toastContent = `${finalEmoji} ${title}`;
+      const toastDescription = message;
 
-    if (result && action) {
-      action.callback();
+      if (action) {
+        toast[type](toastContent, {
+          description: toastDescription,
+          duration,
+          action: {
+            label: action.label,
+            onClick: action.callback
+          }
+        });
+      } else {
+        toast[type](toastContent, {
+          description: toastDescription,
+          duration
+        });
+      }
+    } else {
+      // Fallback to console for server-side or when toast is not available
+      console.log(`${finalEmoji} ${title}: ${message}`);
+      if (action) {
+        console.log(`Action available: ${action.label}`);
+      }
     }
   }
 
