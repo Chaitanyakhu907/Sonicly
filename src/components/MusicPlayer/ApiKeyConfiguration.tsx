@@ -98,14 +98,7 @@ const ApiKeyConfiguration: React.FC<ApiKeyConfigurationProps> = ({
       audioExtractionService: selectedService
     });
 
-    // Set environment variables (for this session)
-    if (typeof window !== 'undefined') {
-      (window as any).process = (window as any).process || {};
-      (window as any).process.env = (window as any).process.env || {};
-      (window as any).process.env.REACT_APP_YOUTUBE_API_KEY = youtubeApiKey;
-      (window as any).process.env.REACT_APP_RAPIDAPI_KEY = rapidApiKey;
-      (window as any).process.env.REACT_APP_BACKEND_URL = customBackendUrl;
-    }
+    // Configuration is now handled through localStorage and the service's setConfig method
 
     toast.success("Configuration saved!", {
       description: "API keys have been configured successfully"
