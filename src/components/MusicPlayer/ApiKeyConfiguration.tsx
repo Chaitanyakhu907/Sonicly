@@ -428,14 +428,25 @@ const ApiKeyConfiguration: React.FC<ApiKeyConfigurationProps> = ({
               Cancel
             </Button>
             <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setSelectedService('demo')}>
-                Skip & Use Demo
-              </Button>
-              <Button 
-                onClick={saveConfiguration}
-                className="bg-blue-600 hover:bg-blue-700"
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setSelectedService('demo');
+                  testDemoMode();
+                }}
+                className="bg-purple-50 hover:bg-purple-100 border-purple-200"
               >
-                Save Configuration
+                🎵 Use Demo Mode
+              </Button>
+              <Button
+                onClick={saveConfiguration}
+                className={cn(
+                  selectedService === 'demo'
+                    ? "bg-purple-600 hover:bg-purple-700"
+                    : "bg-blue-600 hover:bg-blue-700"
+                )}
+              >
+                {selectedService === 'demo' ? '🎵 Start Demo Mode' : '🔑 Save API Keys'}
               </Button>
             </div>
           </div>
