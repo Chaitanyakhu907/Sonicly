@@ -99,11 +99,11 @@ const ApiKeyConfiguration: React.FC<ApiKeyConfigurationProps> = ({
       const errorMessage = error.message || error.toString();
 
       if (errorMessage.includes('403')) {
-        toast.error("❌ YouTube API Setup Required", {
-          description: "To use real YouTube music, you need to set up the YouTube Data API v3. See instructions above, or continue with Demo Mode.",
-          duration: 10000,
+        toast.info("🔑 YouTube API Key Needed", {
+          description: "This is normal! To stream real YouTube music, you need an API key. Or continue with Demo Mode for a full experience.",
+          duration: 8000,
           action: {
-            label: "Use Demo Mode",
+            label: "Switch to Demo Mode",
             onClick: () => {
               setSelectedService('demo');
               testDemoMode();
