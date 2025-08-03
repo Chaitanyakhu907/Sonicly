@@ -253,7 +253,7 @@ const ApiKeyConfiguration: React.FC<ApiKeyConfigurationProps> = ({
                 Get API Key
               </Button>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="youtube-api-key">API Key</Label>
               <Input
@@ -267,6 +267,21 @@ const ApiKeyConfiguration: React.FC<ApiKeyConfigurationProps> = ({
                 Required for searching and fetching video metadata from YouTube.
               </p>
             </div>
+
+            {/* Setup Instructions */}
+            <Alert>
+              <Info className="h-4 w-4" />
+              <AlertDescription>
+                <strong>Setup Steps:</strong>
+                <ol className="list-decimal list-inside mt-2 space-y-1 text-sm">
+                  <li>Go to Google Cloud Console</li>
+                  <li>Enable "YouTube Data API v3"</li>
+                  <li>Create credentials → API Key</li>
+                  <li>Copy the API key here</li>
+                  <li>Test the connection below</li>
+                </ol>
+              </AlertDescription>
+            </Alert>
           </div>
 
           {/* RapidAPI Configuration */}
