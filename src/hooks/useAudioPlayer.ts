@@ -59,6 +59,14 @@ export const useAudioPlayer = () => {
 
   const loadTrack = useCallback((track: AudioFile) => {
     if (audioRef.current) {
+      // Handle YouTube tracks differently
+      if (track.isYouTube) {
+        // For YouTube tracks, we'll show a message since we can't actually play them
+        // In production, you'd integrate with a proper YouTube audio extraction service
+        console.log("Playing YouTube track:", track.name);
+        alert(`🎵 Now playing: ${track.name} by ${track.artist}\n\nNote: This is a demo. In production, this would stream audio from YouTube without ads using proper audio extraction services.`);
+      }
+
       audioRef.current.src = track.url;
       setState((prev) => ({
         ...prev,
