@@ -366,11 +366,21 @@ const DiscoverySection: React.FC<DiscoverySectionProps> = ({
         </div>
       </section>
 
-      {/* User Preferences Indicators */}
+      {/* User Preferences and API Status */}
       {userPreferences.hasCompletedSetup && (
         <section className="mt-8">
           <div className="flex flex-wrap gap-2 justify-center">
-            <div className="text-sm text-gray-500">Your preferences:</div>
+            <div className="text-sm text-gray-500">Your setup:</div>
+
+            {/* API Status */}
+            <Badge
+              variant={isUsingRealApi ? "default" : "secondary"}
+              className={cn("text-xs", isUsingRealApi ? "bg-green-500" : "bg-yellow-500")}
+            >
+              {isUsingRealApi ? "🎵 Real Music" : "🎵 Demo Mode"}
+            </Badge>
+
+            {/* Language Preferences */}
             {userPreferences.languages.map(langCode => {
               const lang = userPreferencesService.getLanguageByCode(langCode);
               return lang ? (
@@ -379,6 +389,8 @@ const DiscoverySection: React.FC<DiscoverySectionProps> = ({
                 </Badge>
               ) : null;
             })}
+
+            {/* Genre Preferences */}
             {userPreferences.genres.slice(0, 4).map(genreId => {
               const genre = userPreferencesService.getGenreById(genreId);
               return genre ? (
