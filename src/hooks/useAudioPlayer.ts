@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { AudioFile } from "./useFileManager";
+import { demoAudioGenerator } from "@/lib/demoAudio";
 
 interface AudioPlayerState {
   currentTrack: AudioFile | null;
@@ -45,21 +46,91 @@ export const useAudioPlayer = () => {
       }));
     };
 
+    const handleError = (e: any) => {
+      const target = e.target as HTMLAudioElement;
+      let errorMessage = "Unknown audio error";
+
+      if (target && target.error) {
+        switch (target.error.code) {
+          case target.error.MEDIA_ERR_ABORTED:
+            errorMessage = "Audio loading was aborted";
+            break;
+          case target.error.MEDIA_ERR_NETWORK:
+            errorMessage = "Network error occurred while loading audio";
+            break;
+          case target.error.MEDIA_ERR_DECODE:
+            errorMessage = "Audio decoding error";
+            break;
+          case target.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+            errorMessage = "Audio format not supported";
+            break;
+          default:
+            errorMessage = `Audio error code: ${target.error.code}`;
+        }
+      }
+
+      console.error("Audio loading error:", errorMessage, "Source:", target?.src);
+
+      setState((prev) => ({
+        ...prev,
+        isPlaying: false,
+      }));
+    };
+
     audio.addEventListener("timeupdate", handleTimeUpdate);
     audio.addEventListener("loadedmetadata", handleLoadedMetadata);
     audio.addEventListener("ended", handleEnded);
+    audio.addEventListener("error", handleError);
 
     return () => {
       audio.removeEventListener("timeupdate", handleTimeUpdate);
       audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
       audio.removeEventListener("ended", handleEnded);
+      audio.removeEventListener("error", handleError);
       audio.pause();
     };
   }, []);
 
   const loadTrack = useCallback((track: AudioFile) => {
     if (audioRef.current) {
-      audioRef.current.src = track.url;
+      // Handle YouTube tracks differently
+      if (track.isYouTube) {
+        console.log("Loading YouTube track:", track.name || track.title);
+
+        // Generate demo audio for YouTube tracks
+        demoAudioGenerator.getDemoAudioForTrack(track.id, track.name || track.title || '')
+          .then(demoUrl => {
+            if (audioRef.current) {
+              audioRef.current.src = demoUrl;
+            }
+          })
+          .catch(error => {
+            console.error('Failed to generate demo audio:', error);
+            // Fallback to empty source
+            if (audioRef.current) {
+              audioRef.current.src = "";
+            }
+          });
+
+        // Show demo notification using toast
+        setTimeout(() => {
+          // Import and use toast dynamically to avoid dependency issues
+          import("@/hooks/use-toast").then(({ toast }) => {
+            toast({
+              title: `🎵 ${track.name || track.title}`,
+              description: `by ${track.artist} • Playing demo audio tone`,
+              duration: 4000,
+            });
+          }).catch(() => {
+            // Fallback to console if toast is not available
+            console.log(`🎵 Now Playing: ${track.name || track.title} by ${track.artist} (Demo Mode)`);
+          });
+        }, 100);
+      } else {
+        // Regular local audio file
+        audioRef.current.src = track.url;
+      }
+
       setState((prev) => ({
         ...prev,
         currentTrack: track,
@@ -71,6 +142,13 @@ export const useAudioPlayer = () => {
 
   const play = useCallback(async () => {
     if (audioRef.current && state.currentTrack) {
+      // Don't try to play YouTube tracks since they don't have audio sources
+      if (state.currentTrack.isYouTube) {
+        setState((prev) => ({ ...prev, isPlaying: true }));
+        console.log("Demo: Playing YouTube track", state.currentTrack.name || state.currentTrack.title);
+        return;
+      }
+
       try {
         await audioRef.current.play();
         setState((prev) => ({ ...prev, isPlaying: true }));
@@ -84,8 +162,11 @@ export const useAudioPlayer = () => {
     if (audioRef.current) {
       audioRef.current.pause();
       setState((prev) => ({ ...prev, isPlaying: false }));
+    } else if (state.currentTrack?.isYouTube) {
+      // Handle YouTube track pause
+      setState((prev) => ({ ...prev, isPlaying: false }));
     }
-  }, []);
+  }, [state.currentTrack]);
 
   const togglePlayPause = useCallback(() => {
     if (state.isPlaying) {

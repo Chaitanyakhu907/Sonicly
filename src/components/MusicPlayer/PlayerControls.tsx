@@ -123,7 +123,7 @@ const PlayerControls: React.FC<PlayerControlsProps> = ({
       </div>
     );
   }
-  const hasAlbumArt = isAudioFile && currentTrack.albumArt;
+  const hasAlbumArt = currentTrack?.albumArt || currentTrack?.thumbnail;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-black/95 to-black/80 backdrop-blur-lg border-t border-white/10">
@@ -140,7 +140,7 @@ const PlayerControls: React.FC<PlayerControlsProps> = ({
           >
             <div
               className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all group-hover:h-1.5"
-              style={{ width: `${progress}%` }}
+              style={{ width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%` }}
             />
           </div>
           <div className="flex justify-between text-xs text-gray-400 mt-1">
@@ -183,7 +183,7 @@ const PlayerControls: React.FC<PlayerControlsProps> = ({
             {/* Track Details */}
             <div className="flex flex-col min-w-0 flex-1">
               <h3 className="text-white font-semibold text-sm md:text-base truncate">
-                {currentTrack.title}
+                {currentTrack.title || currentTrack.name}
               </h3>
               <p className="text-gray-400 text-xs md:text-sm truncate">
                 {currentTrack.artist}
